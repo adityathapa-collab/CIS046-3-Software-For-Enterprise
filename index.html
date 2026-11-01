@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banana Game - Enterprise Software Assignment</title>
+    <style>
+        /* basic styling copied from stackoverflow tutorial, need to clean up later */
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin-top: 40px; 
+            background: #e2e2e2; 
+        }
+        .container { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 5px; 
+            display: inline-block; 
+            border: 1px solid #ccc;
+        }
+        img { 
+            max-width: 280px; 
+            border: 1px solid #999; 
+            margin: 10px 0; 
+        }
+        input, button { 
+            padding: 8px; 
+            font-size: 15px; 
+            margin-top: 8px; 
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>My Enterprise App - Banana Puzzle</h2>
+
+        <!-- login section for virtual identity -->
+        <div id="login-div">
+            <p>Enter your name to login:</p>
+            <input type="text" id="nameBox" placeholder="Username...">
+            <br>
+            <button id="loginBtn">Log In</button>
+        </div>
+
+        <!-- game section, hidden untill logged in -->
+        <div id="game-div" class="hidden">
+            <p>Hello <span id="userText" style="color: green; font-weight: bold;"></span> | <a href="#" id="logoutLink">Logout</a></p>
+            
+            <hr>
+            <p>Solve this puzzle:</p>
+            <div id="imgContainer">
+                <img id="puzzleImg" src="" alt="puzzle loading...">
+            </div>
+
+            <div>
+                <input type="number" id="answerInput" placeholder="answer here">
+                <br>
+                <button id="submitBtn">Check Answer</button>
+            </div>
+            <p id="msg" style="font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <script>
+        // testing if cookies work - got this function from w3schools
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        // check if user is already logged in on page load
+        let activeUser = getCookie("username");
+        console.log("current active user from cookie: " + activeUser); // debug log left in code
+
+        if (activeUser != "") {
+            document.getElementById("login-div").classList.add("hidden");
+            document.getElementById("game-div").classList.remove("hidden");
+            document.getElementById("userText").innerHTML = activeUser;
+            loadBananaApi();
+        }
+
+        // login button event
+        document.getElementById("loginBtn").addEventListener("click", function() {
+            let uName = document.getElementById("nameBox").value;
+            if(uName == "") {
+                alert("type something pls");
+                return;
+            }
+            setCookie("username", uName, 1);
+            location.reload(); // reload page to apply cookie session
+        });
+
+        // logout link click event
+        document.getElementById("logoutLink").addEventListener("click", function(e) {
+            e.preventDefault();
+            setCookie("username", "", -1); // delete cookie
+            location.reload();
+        });
+
+        // Interoperability - fetching api from marc conrad server
+        let correctSol = 0;
+        function loadBananaApi() {
+            fetch('https://marcconrad.com/uob/banana/api.php?out=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("puzzleImg").src = data.question;
+                    correctSol = data.solution;
+                })
+                .catch(err => {
+                    console.log("api error: " + err);
+                    document.getElementById("imgContainer").innerHTML = "Failed to load API image.";
+                });
+        }
+
+        // event listener for submitting answer
+        document.getElementById("submitBtn").addEventListener("click", function() {
+            let userAns = document.getElementById("answerInput").value;
+            let feedback = document.getElementById("msg");
+
+            if(userAns == correctSol) {
+                feedback.style.color = "blue";
+                feedback.innerHTML = "Correct!! Good job";
+            } else {
+                feedback.style.color = "red";
+                feedback.innerHTML = "Wrong answer, try again.";
+            }
+        });
+    </script>
+
+</body>
+</html>
