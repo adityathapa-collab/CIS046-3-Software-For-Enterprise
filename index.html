@@ -21,7 +21,7 @@
         }
         img { 
             max-width: 280px; 
-            border: 1px solid #999; 
+            border: 1px solid #999;
             margin: 10px 0; 
         }
         input, button { 
@@ -64,36 +64,12 @@
         </div>
     </div>
 
-    <script>
-        // testing if cookies work - got this function from w3schools
-        function setCookie(cname, cvalue, exdays) {
-            const d = new Date();
-            d.setTime(d.getTime() + (exdays*24*60*60*1000));
-            let expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        }
+<script>
+        // checking active user from local storage for virtual identity
+        let activeUser = localStorage.getItem("username");
+        console.log("current active user: " + activeUser); // debug log
 
-        function getCookie(cname) {
-            let name = cname + "=";
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let ca = decodedCookie.split(';');
-            for(let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
-                }
-            }
-            return "";
-        }
-
-        // check if user is already logged in on page load
-        let activeUser = getCookie("username");
-        console.log("current active user from cookie: " + activeUser); // debug log left in code
-
-        if (activeUser != "") {
+        if (activeUser != null && activeUser != "") {
             document.getElementById("login-div").classList.add("hidden");
             document.getElementById("game-div").classList.remove("hidden");
             document.getElementById("userText").innerHTML = activeUser;
@@ -107,14 +83,14 @@
                 alert("type something pls");
                 return;
             }
-            setCookie("username", uName, 1);
-            location.reload(); // reload page to apply cookie session
+            localStorage.setItem("username", uName);
+            location.reload(); // reload page to apply session
         });
 
         // logout link click event
         document.getElementById("logoutLink").addEventListener("click", function(e) {
             e.preventDefault();
-            setCookie("username", "", -1); // delete cookie
+            localStorage.removeItem("username"); // clear session
             location.reload();
         });
 
