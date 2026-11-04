@@ -1,68 +1,42 @@
-body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    text-align: center; 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
     margin: 0;
-    padding-top: 50px; 
-    /* Modern neutral gradient background for visual separation */
+    padding-top: 50px;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
     color: #333;
 }
 
-/* Main Container Card Component (Client UI Shell with Watermark) */
-.container { 
-    background-color: #ffffff;
-    background-image: url('https://cdn-icons-png.flaticon.com/512/590/590685.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 180px;
-    background-blend-mode: overlay;
-    
-    padding: 30px; 
-    border-radius: 8px; 
-    display: inline-block; 
+/* Main container card */
+.container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    display: inline-block;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid #e1e4e8;
     max-width: 450px;
     width: 90%;
 }
+.container.wide { max-width: 800px; }
 
-/* Main Container Card Component (Client UI Shell) */
-.container { 
-    background-color: #ffffff;
-    
-    /* Self-contained clean vector background pattern */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23f1f3f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E");
-    
-    padding: 30px; 
-    border-radius: 8px; 
-    display: inline-block; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e1e4e8;
-    max-width: 450px;
-    width: 90%;
-}
+h2 { color: #2c3e50; margin-bottom: 20px; }
 
-/* Section Header Styling */
-h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
-
-/* Interoperable API Image Container Styling */
-img { 
-    max-width: 280px; 
+/* Puzzle image returned by the external API */
+img {
+    max-width: 280px;
     border: 2px solid #ddd;
     border-radius: 4px;
-    margin: 15px 0; 
+    margin: 15px 0;
     background: #f9f9f9;
 }
 
-/* Form Controls: User Input Fields */
-input[type="text"], 
-input[type="number"] { 
-    padding: 10px; 
-    font-size: 15px; 
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+    padding: 10px;
+    font-size: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 80%;
@@ -70,10 +44,9 @@ input[type="number"] {
     box-sizing: border-box;
 }
 
-/* Action Buttons & State Transitions */
-button { 
-    padding: 10px 20px; 
-    font-size: 15px; 
+button {
+    padding: 10px 20px;
+    font-size: 15px;
     font-weight: bold;
     background-color: #3498db;
     color: white;
@@ -83,31 +56,20 @@ button {
     margin-top: 12px;
     transition: background-color 0.2s ease;
 }
+button:hover { background-color: #2980b9; }
+button.secondary { background-color: #7f8c8d; }
+button.secondary:hover { background-color: #636e72; }
 
-/* Interactive Hover State for Buttons */
-button:hover { 
-    background-color: #2980b9; 
-}
+a { color: #3498db; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-/* Navigation Links (Logout / Admin Portal) */
-a {
-    color: #3498db;
-    text-decoration: none;
-}
+.hidden { display: none; }
+.username { color: green; font-weight: bold; }
+.msg { font-weight: bold; min-height: 1.2em; }
+.stats { font-size: 13px; color: #666; }
 
-a:hover {
-    text-decoration: underline;
-}
+hr { border: 0; height: 1px; background: #e1e4e8; margin: 20px 0; }
 
-/* Utility Class for Session-Based Visibility Toggling */
-.hidden { 
-    display: none; 
-}
-
-/* Structural Content Dividers */
-hr {
-    border: 0;
-    height: 1px;
-    background: #e1e4e8;
-    margin: 20px 0;
-}
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; text-align: left; }
+th, td { border: 1px solid #e1e4e8; padding: 6px 8px; }
+th { background: #f5f7fa; }

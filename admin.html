@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Banana Puzzle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container wide">
+        <h2>Admin Portal</h2>
+        <p><a href="index.html">Back to game</a></p>
+        <p id="adminMsg" class="msg"></p>
+        <div id="adminData" class="hidden">
+            <p id="sessionCount"></p>
+            <h3>Users</h3>
+            <table id="userTable"><thead><tr><th>User</th><th>Role</th><th>Solved</th><th>Attempts</th></tr></thead><tbody></tbody></table>
+            <h3>Recent server logs</h3>
+            <table id="logTable"><thead><tr><th>Time</th><th>Level</th><th>Message</th></tr></thead><tbody></tbody></table>
+        </div>
+    </div>
+    <script src="logger.js"></script>
+    <script src="api-service.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

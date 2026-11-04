@@ -1,133 +1,132 @@
-// Global state variables for session and puzzle validation
-let activeUser = localStorage.getItem("username");
-let correctSol = 0;
-
-// Execute initialization routines upon DOM / Window load context
-console.log("[INIT] Initializing Enterprise Client Application...");
-console.log("[AUTH] Checking active virtual identity session token...");
-console.log("[DEBUG] Current active user from localStorage: " + (activeUser ? activeUser : "None detected"));
-
-/**
- * Session State Verification & UI Rendering Guard
- * Validates whether a virtual identity token exists. If active, bypasses 
- * the login gateway and initializes client-side data fetching routines.
+/*
+ * Client-side controller: owns the UI state and ALL event handlers.
+ *
+ * EVENT-DRIVEN DESIGN: nothing runs in a loop. The code reacts to events:
+ *   DOMContentLoaded, click (login, register, logout, submit, next), keydown (Enter)
+ *
+ * REFERENCES: MDN Web Docs for addEventListener / DOM APIs.
+ * Written with LLM assistance (Claude, Anthropic), reviewed and adapted by Aditya Thapa.
  */
-if (activeUser != null && activeUser != "") {
-    console.log("[AUTH] Active session verified. Restricting login view and mounting dashboard...");
-    
-    // DOM Node Manipulation: Toggle visibility states
-    document.getElementById("login-div").classList.add("hidden");
-    document.getElementById("game-div").classList.remove("hidden");
-    document.getElementById("userText").textContent = activeUser;
-    
-    // Invoke remote interoperability service
-    loadBananaApi();
-} else {
-    console.log("[AUTH] No active session found. Presenting authentication gate.");
-    document.getElementById("login-div").classList.remove("hidden");
-    document.getElementById("game-div").classList.add("hidden");
+const $ = id => document.getElementById(id);
+
+let correctSol = null;      // solution returned by the Banana API for the current puzzle
+let answered = false;       // stops one puzzle being scored more than once
+
+/* ---------- UI helpers ---------- */
+function setMessage(el, text, colour) {
+    el.style.color = colour;
+    el.textContent = text;
 }
 
-/**
- * Event Listener: User Authentication Trigger
- * Captures user input, enforces basic validation constraints, persists 
- * the identity to browser storage, and reloads the application context.
- */
-document.getElementById("loginBtn").addEventListener("click", function(event) {
-    event.preventDefault();
-    let uName = document.getElementById("nameBox").value.trim();
-    
-    console.log("[AUTH_EVENT] Login button triggered. Validating input string...");
-    
-    if(uName === "") {
-        console.warn("[AUTH_WARN] Validation failed: Empty string provided for username.");
-        alert("Please enter a valid student username to proceed.");
-        return;
-    }
-    
-    console.log("[AUTH_SUCCESS] Persisting virtual identity token for: " + uName);
-    localStorage.setItem("username", uName);
-    
-    // Soft reload to apply session state globally across DOM tree
-    location.reload(); 
-});
+function renderStats(stats) {
+    $('stats').textContent =
+        `Solved: ${stats.solved} | Attempts: ${stats.attempts} | Streak: ${stats.streak} | Best streak: ${stats.bestStreak}`;
+}
 
-/**
- * Event Listener: Session Termination (Logout Handler)
- * Clears persistent virtual identity tokens and resets application state.
- */
-document.getElementById("logoutLink").addEventListener("click", function(e) {
-    e.preventDefault();
-    console.log("[AUTH_EVENT] Logout requested. Purging localStorage session token...");
-    
-    localStorage.removeItem("username"); 
-    console.log("[AUTH_SUCCESS] Session terminated successfully. Reloading view.");
-    location.reload();
-});
+function showGame(user) {
+    $('login-div').classList.add('hidden');
+    $('game-div').classList.remove('hidden');
+    $('userText').textContent = user.username;
+    $('adminLinkWrap').classList.toggle('hidden', user.role !== 'admin');
+    renderStats(user.stats);
+    loadPuzzle();
+}
 
-/**
- * Interoperability Module: Remote API Integration
- * Fetches JSON payload asynchronously from Marc Conrad's UoB Banana API server.
- * Protocol: HTTPS / REST JSON GET Request
- */
-function loadBananaApi() {
-    console.log("[API_FETCH] Initiating asynchronous request to Marc Conrad remote endpoint...");
-    
-    fetch('https://marcconrad.com/uob/banana/api.php?out=json', {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error status: ${response.status}`);
-        }
-        console.log("[API_SUCCESS] HTTP response received successfully. Parsing JSON payload...");
-        return response.json();
-    })
-    .then(data => {
-        console.log("[API_DATA] Puzzle image source loaded: " + data.question);
-        console.log("[API_DATA] Solution captured securely in local memory variable.");
-        
-        // Dynamically bind remote asset to DOM element
-        document.getElementById("puzzleImg").src = data.question;
+function showLogin() {
+    $('game-div').classList.add('hidden');
+    $('login-div').classList.remove('hidden');
+}
+
+/* ---------- puzzle loading (interoperability with the Banana API) ---------- */
+async function loadPuzzle() {
+    answered = false;
+    $('answerInput').value = '';
+    $('msg').textContent = '';
+    $('puzzleImg').src = '';
+    try {
+        const data = await fetchBananaPuzzle();
+        $('puzzleImg').src = data.question;
         correctSol = data.solution;
-        
-        // Extended architectural hooks for event logging and metadata tracing
-        // (Maintains pipeline compatibility with downstream components)
-    })
-    .catch(err => {
-        console.error("[API_ERROR] Critical failure during remote resource fetch: " + err);
-        document.getElementById("imgContainer").innerHTML = "<p style='color: red;'>Failed to load remote API image. Please check network connection.</p>";
-    });
+        EnterpriseLogger.logEvent('api', 'Puzzle loaded');
+    } catch (err) {
+        EnterpriseLogger.logError('api', err);
+        setMessage($('msg'), 'Failed to load puzzle from the Banana API. Check your connection.', 'red');
+    }
 }
 
-/**
- * Event Listener: Puzzle Answer Submission & Validation
- * Compares user numerical input against cached API solution state 
- * and provides dynamic DOM feedback styling.
- */
-document.getElementById("submitBtn").addEventListener("click", function() {
-    let userAns = document.getElementById("answerInput").value;
-    let feedback = document.getElementById("msg");
+/* ---------- authentication events (virtual identity) ---------- */
+async function authenticate(path) {
+    const username = $('nameBox').value.trim();
+    const password = $('passBox').value;
+    if (!username || !password) {
+        setMessage($('authMsg'), 'Please enter a username and password.', 'orange');
+        return;
+    }
+    try {
+        const user = await apiRequest('POST', path, { username, password });
+        $('passBox').value = '';
+        $('authMsg').textContent = '';
+        EnterpriseLogger.logEvent('auth', `${path} succeeded for ${user.username}`);
+        showGame(user);
+    } catch (err) {
+        EnterpriseLogger.logError('auth', err.message);
+        setMessage($('authMsg'), err.message, 'red');
+    }
+}
 
-    console.log("[GAME_EVENT] Answer submission intercepted. User input: " + userAns);
-    console.log("[GAME_CHECK] Evaluating against expected solution: " + correctSol);
+$('loginBtn').addEventListener('click', () => authenticate('/api/login'));
+$('registerBtn').addEventListener('click', () => authenticate('/api/register'));
+$('passBox').addEventListener('keydown', e => { if (e.key === 'Enter') authenticate('/api/login'); });
 
-    if(userAns === "") {
-        feedback.style.color = "orange";
-        feedback.innerHTML = "Please enter a numerical answer before checking.";
+$('logoutLink').addEventListener('click', async e => {
+    e.preventDefault();
+    try { await apiRequest('POST', '/api/logout'); } catch (err) { /* already logged out */ }
+    EnterpriseLogger.logEvent('auth', 'Logged out');
+    showLogin();
+});
+
+/* ---------- game events ---------- */
+async function checkAnswer() {
+    const value = $('answerInput').value;
+    if (value === '') {
+        setMessage($('msg'), 'Please enter a numerical answer first.', 'orange');
+        return;
+    }
+    if (answered) {
+        setMessage($('msg'), 'Already answered - press Next Puzzle.', 'orange');
         return;
     }
 
-    if(Number(userAns) === Number(correctSol)) {
-        console.log("[GAME_RESULT] Validation passed: Correct answer.");
-        feedback.style.color = "blue";
-        feedback.innerHTML = "Correct!! Good job, enterprise solution verified.";
+    const correct = Number(value) === Number(correctSol);
+    EnterpriseLogger.logEvent('game', `Answer ${value} is ${correct ? 'correct' : 'wrong'}`);
+
+    if (correct) {
+        answered = true;
+        setMessage($('msg'), 'Correct! Good job.', 'blue');
     } else {
-        console.log("[GAME_RESULT] Validation failed: Incorrect answer.");
-        feedback.style.color = "red";
-        feedback.innerHTML = "Wrong answer, try again.";
+        setMessage($('msg'), 'Wrong answer, try again.', 'red');
+    }
+
+    try {   // report the result to OUR server so it can keep the player's stats
+        const result = await apiRequest('POST', '/api/result', { correct });
+        renderStats(result.stats);
+    } catch (err) {
+        EnterpriseLogger.logError('game', err.message);
+        if (/session/i.test(err.message)) showLogin();   // session expired
+    }
+}
+
+$('submitBtn').addEventListener('click', checkAnswer);
+$('answerInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+$('nextBtn').addEventListener('click', loadPuzzle);
+
+/* ---------- start-up event: is there already a valid session cookie? ---------- */
+document.addEventListener('DOMContentLoaded', async () => {
+    EnterpriseLogger.logEvent('init', 'Checking for an existing session cookie...');
+    try {
+        const user = await apiRequest('GET', '/api/me');
+        showGame(user);
+    } catch (err) {
+        showLogin();
     }
 });

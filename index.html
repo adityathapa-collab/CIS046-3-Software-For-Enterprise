@@ -7,24 +7,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
         <h2>Enterprise App - Banana Puzzle</h2>
 
-        <!-- login section for virtual identity -->
+        <!-- Login / register section (virtual identity) -->
         <div id="login-div">
-            <p>Enter your student name to login:</p>
-            <input type="text" id="nameBox" placeholder="Username...">
+            <p>Log in or create an account to play:</p>
+            <input type="text" id="nameBox" placeholder="Username" autocomplete="username">
+            <br>
+            <input type="password" id="passBox" placeholder="Password (min 8 characters)" autocomplete="current-password">
             <br>
             <button id="loginBtn">Log In</button>
+            <button id="registerBtn" class="secondary">Register</button>
+            <p id="authMsg" class="msg"></p>
         </div>
 
-        <!-- game section, hidden until logged in -->
+        <!-- Game section, hidden until logged in -->
         <div id="game-div" class="hidden">
-            <p>Welcome, <span id="userText" style="color: green; font-weight: bold;"></span> | <a href="#" id="logoutLink">Logout</a> | <a href="admin.php" target="_blank">Admin Portal</a></p>
-            
+            <p>Welcome, <span id="userText" class="username"></span> |
+               <a href="#" id="logoutLink">Logout</a>
+               <span id="adminLinkWrap" class="hidden"> | <a href="admin.html" target="_blank">Admin Portal</a></span></p>
+            <p id="stats" class="stats"></p>
+
             <hr>
-            <p>Solve this puzzle from external API:</p>
+            <p>Solve this puzzle from the external Banana API:</p>
             <div id="imgContainer">
                 <img id="puzzleImg" src="" alt="puzzle loading...">
             </div>
@@ -33,12 +39,13 @@
                 <input type="number" id="answerInput" placeholder="answer here">
                 <br>
                 <button id="submitBtn">Check Answer</button>
+                <button id="nextBtn" class="secondary">Next Puzzle</button>
             </div>
-            <p id="msg" style="font-weight: bold;"></p>
+            <p id="msg" class="msg"></p>
         </div>
     </div>
 
-    <!-- linking modular & frontend scripts -->
+    <script src="logger.js"></script>
     <script src="api-service.js"></script>
     <script src="app.js"></script>
 </body>

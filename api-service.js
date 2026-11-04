@@ -1,30 +1,41 @@
-const API_ENDPOINT = 'https://marcconrad.com/uob/banana/api.php?out=json';
+/*
+ * API service module - ALL network calls live here (interoperability layer).
+ *
+ * REFERENCES:
+ *  - Banana API by Marc Conrad: https://marcconrad.com/uob/banana/doc.php
+ *  - fetch() / async-await pattern: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+ *  - Written with LLM assistance (Claude, Anthropic), reviewed by Aditya Thapa.
+ */
+const BANANA_API = 'https://marcconrad.com/uob/banana/api.php?out=json';
 
 /**
- * Asynchronously fetches the puzzle data from the remote endpoint.
- * @returns {Promise<Object>} Resolves with the puzzle question URL and solution.
+ * Interoperability with a THIRD-PARTY web service (different server, different
+ * organisation). Protocol: HTTPS, REST-style GET, JSON payload.
+ * Resolves to { question: <image url>, solution: <number> }.
  */
 async function fetchBananaPuzzle() {
-    console.log("[API_SERVICE] Dispatching asynchronous GET request to remote endpoint...");
-    
-    try {
-        const response = await fetch(API_ENDPOINT, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Network response error: ${response.statusText} (Code: ${response.status})`);
-        }
-
-        const data = await response.json();
-        console.log("[API_SERVICE] Payload successfully parsed. Question URL: " + data.question);
-        return data;
-
-    } catch (error) {
-        console.error("[API_SERVICE] Critical failure fetching remote resource: ", error);
-        throw error;
+    EnterpriseLogger.logEvent('api', 'GET ' + BANANA_API);
+    const response = await fetch(BANANA_API, { headers: { 'Accept': 'application/json' } });
+    if (!response.ok) {
+        throw new Error(`Banana API error: HTTP ${response.status}`);
     }
+    return response.json();
+}
+
+/**
+ * Interoperability with OUR OWN backend (Express server, JSON over HTTP).
+ * The session cookie is attached automatically by the browser (same origin).
+ */
+async function apiRequest(method, url, body) {
+    const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: body ? JSON.stringify(body) : undefined
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+    }
+    return data;
 }
