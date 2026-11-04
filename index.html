@@ -4,53 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banana Game - Enterprise Software Assignment</title>
-    <style>
-        /* basic styling copied from stackoverflow tutorial, need to clean up later */
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            margin-top: 40px; 
-            background: #e2e2e2; 
-        }
-        .container { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 5px; 
-            display: inline-block; 
-            border: 1px solid #ccc;
-        }
-        img { 
-            max-width: 280px; 
-            border: 1px solid #999;
-            margin: 10px 0; 
-        }
-        input, button { 
-            padding: 8px; 
-            font-size: 15px; 
-            margin-top: 8px; 
-        }
-        .hidden { display: none; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>My Enterprise App - Banana Puzzle</h2>
+        <h2>Enterprise App - Banana Puzzle</h2>
 
         <!-- login section for virtual identity -->
         <div id="login-div">
-            <p>Enter your name to login:</p>
+            <p>Enter your student name to login:</p>
             <input type="text" id="nameBox" placeholder="Username...">
             <br>
             <button id="loginBtn">Log In</button>
         </div>
 
-        <!-- game section, hidden untill logged in -->
+        <!-- game section, hidden until logged in -->
         <div id="game-div" class="hidden">
-            <p>Hello <span id="userText" style="color: green; font-weight: bold;"></span> | <a href="#" id="logoutLink">Logout</a></p>
+            <p>Welcome, <span id="userText" style="color: green; font-weight: bold;"></span> | <a href="#" id="logoutLink">Logout</a> | <a href="admin.php" target="_blank">Admin Portal</a></p>
             
             <hr>
-            <p>Solve this puzzle:</p>
+            <p>Solve this puzzle from external API:</p>
             <div id="imgContainer">
                 <img id="puzzleImg" src="" alt="puzzle loading...">
             </div>
@@ -64,65 +38,7 @@
         </div>
     </div>
 
-<script>
-        // checking active user from local storage for virtual identity
-        let activeUser = localStorage.getItem("username");
-        console.log("current active user: " + activeUser); // debug log
-
-        if (activeUser != null && activeUser != "") {
-            document.getElementById("login-div").classList.add("hidden");
-            document.getElementById("game-div").classList.remove("hidden");
-            document.getElementById("userText").innerHTML = activeUser;
-            loadBananaApi();
-        }
-
-        // login button event
-        document.getElementById("loginBtn").addEventListener("click", function() {
-            let uName = document.getElementById("nameBox").value;
-            if(uName == "") {
-                alert("type something pls");
-                return;
-            }
-            localStorage.setItem("username", uName);
-            location.reload(); // reload page to apply session
-        });
-
-        // logout link click event
-        document.getElementById("logoutLink").addEventListener("click", function(e) {
-            e.preventDefault();
-            localStorage.removeItem("username"); // clear session
-            location.reload();
-        });
-
-        // Interoperability - fetching api from marc conrad server
-        let correctSol = 0;
-        function loadBananaApi() {
-            fetch('https://marcconrad.com/uob/banana/api.php?out=json')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("puzzleImg").src = data.question;
-                    correctSol = data.solution;
-                })
-                .catch(err => {
-                    console.log("api error: " + err);
-                    document.getElementById("imgContainer").innerHTML = "Failed to load API image.";
-                });
-        }
-
-        // event listener for submitting answer
-        document.getElementById("submitBtn").addEventListener("click", function() {
-            let userAns = document.getElementById("answerInput").value;
-            let feedback = document.getElementById("msg");
-
-            if(userAns == correctSol) {
-                feedback.style.color = "blue";
-                feedback.innerHTML = "Correct!! Good job";
-            } else {
-                feedback.style.color = "red";
-                feedback.innerHTML = "Wrong answer, try again.";
-            }
-        });
-    </script>
-
+    <!-- linking separate frontend script -->
+    <script src="app.js"></script>
 </body>
 </html>
