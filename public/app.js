@@ -1,12 +1,3 @@
-/*
- * Client-side controller: owns the UI state and ALL event handlers.
- *
- * EVENT-DRIVEN DESIGN: nothing runs in a loop. The code reacts to events:
- *   DOMContentLoaded, click (login, register, logout, submit, next), keydown (Enter)
- *
- * REFERENCES: MDN Web Docs for addEventListener / DOM APIs.
- * Written with LLM assistance (Claude, Anthropic), reviewed and adapted by Aditya Thapa.
- */
 const $ = id => document.getElementById(id);
 
 let correctSol = null;      // solution returned by the Banana API for the current puzzle

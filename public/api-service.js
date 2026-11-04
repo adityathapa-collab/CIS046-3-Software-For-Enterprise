@@ -1,11 +1,3 @@
-/*
- * API service module - ALL network calls live here (interoperability layer).
- *
- * REFERENCES:
- *  - Banana API by Marc Conrad: https://marcconrad.com/uob/banana/doc.php
- *  - fetch() / async-await pattern: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
- *  - Written with LLM assistance (Claude, Anthropic), reviewed by Aditya Thapa.
- */
 const BANANA_API = 'https://marcconrad.com/uob/banana/api.php?out=json';
 
 /**

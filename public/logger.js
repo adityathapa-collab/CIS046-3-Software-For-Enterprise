@@ -1,7 +1,3 @@
-/*
- * Small client-side logger used by app.js.
- * Written by Aditya Thapa (structure suggested with LLM help - edit this note if needed).
- */
 class EnterpriseLogger {
     static logEvent(category, message) {
         console.log(`[${new Date().toISOString()}] [${category.toUpperCase()}] ${message}`);
