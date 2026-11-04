@@ -1,28 +1,92 @@
-/* basic styling copied from stackoverflow tutorial, need to clean up later */
 body { 
-    font-family: Arial, sans-serif; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     text-align: center; 
-    margin-top: 40px; 
-    background: #e2e2e2; 
+    margin: 0;
+    padding-top: 50px; 
+    /* Modern neutral gradient background for visual separation */
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    color: #333;
 }
+
+/* Main Container Card Component (Client UI Shell) */
 .container { 
-    background: white; 
-    padding: 25px; 
-    border-radius: 5px; 
+    background: #ffffff; 
+    padding: 30px; 
+    border-radius: 8px; 
     display: inline-block; 
-    border: 1px solid #ccc;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    /* Soft shadow to create visual depth and card separation */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e4e8;
+    max-width: 450px;
+    width: 90%;
 }
+
+/* Section Header Styling */
+h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Interoperable API Image Container Styling */
 img { 
     max-width: 280px; 
-    border: 1px solid #999;
-    margin: 10px 0; 
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    margin: 15px 0; 
+    background: #f9f9f9;
 }
-input, button { 
-    padding: 8px; 
+
+/* Form Controls: User Input Fields */
+input[type="text"], 
+input[type="number"] { 
+    padding: 10px; 
     font-size: 15px; 
-    margin-top: 8px; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 80%;
+    margin-top: 10px;
+    box-sizing: border-box;
 }
+
+/* Action Buttons & State Transitions */
+button { 
+    padding: 10px 20px; 
+    font-size: 15px; 
+    font-weight: bold;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background-color 0.2s ease;
+}
+
+/* Interactive Hover State for Buttons */
+button:hover { 
+    background-color: #2980b9; 
+}
+
+/* Navigation Links (Logout / Admin Portal) */
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Utility Class for Session-Based Visibility Toggling */
 .hidden { 
     display: none; 
+}
+
+/* Structural Content Dividers */
+hr {
+    border: 0;
+    height: 1px;
+    background: #e1e4e8;
+    margin: 20px 0;
 }
