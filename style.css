@@ -9,13 +9,34 @@ body {
     color: #333;
 }
 
-/* Main Container Card Component (Client UI Shell) */
+/* Main Container Card Component (Client UI Shell with Watermark) */
 .container { 
-    background: #ffffff; 
+    background-color: #ffffff;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/590/590685.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 180px;
+    background-blend-mode: overlay;
+    
     padding: 30px; 
     border-radius: 8px; 
     display: inline-block; 
-    /* Soft shadow to create visual depth and card separation */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e4e8;
+    max-width: 450px;
+    width: 90%;
+}
+
+/* Main Container Card Component (Client UI Shell) */
+.container { 
+    background-color: #ffffff;
+    
+    /* Self-contained clean vector background pattern */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23f1f3f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E");
+    
+    padding: 30px; 
+    border-radius: 8px; 
+    display: inline-block; 
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid #e1e4e8;
     max-width: 450px;

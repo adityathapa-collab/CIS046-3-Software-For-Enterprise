@@ -1,0 +1,10 @@
+{
+  "users": [
+    { "id": 1, "username": "test_student", "role": "admin", "lastLogin": "2026-11-04" },
+    { "id": 2, "username": "evaluator", "role": "examiner", "lastLogin": "2026-11-03" }
+  ],
+  "systemLogs": [
+    { "timestamp": "2026-11-04T08:00:00Z", "level": "INFO", "message": "Server initialized successfully." },
+    { "timestamp": "2026-11-04T08:05:12Z", "level": "DEBUG", "message": "API endpoint connection established." }
+  ]
+}

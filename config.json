@@ -1,0 +1,8 @@
+{
+  "appName": "Enterprise Banana Puzzle System",
+  "version": "1.0.0",
+  "environment": "production",
+  "apiEndpoint": "https://marcconrad.com/uob/banana/api.php?out=json",
+  "sessionTimeoutMinutes": 30,
+  "debugMode": true
+}
