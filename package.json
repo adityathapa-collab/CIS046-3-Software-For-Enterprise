@@ -1,0 +1,15 @@
+{
+  "name": "enterprise-banana-puzzle-app",
+  "version": "1.0.0",
+  "description": "CIS046-3 Software for Enterprise assessment project demonstrating version control, interoperability, and virtual identity.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Student Developer",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
