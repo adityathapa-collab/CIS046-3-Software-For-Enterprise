@@ -1,18 +1,3 @@
-/*
- * CIS046-3 Software for Enterprise - Banana Puzzle server
- * Author: Aditya Thapa
- *
- * REFERENCES / ACKNOWLEDGEMENTS
- *  - Banana API (puzzle source): Marc Conrad, https://marcconrad.com/uob/banana/doc.php
- *  - Express documentation: https://expressjs.com
- *  - Node.js crypto (scrypt, timingSafeEqual): https://nodejs.org/api/crypto.html
- *  - This file was written with the help of an LLM (Claude, Anthropic) and then
- *    reviewed and adapted by me. [Edit this line so it describes what YOU changed.]
- *
- * VIRTUAL IDENTITY: passwords are hashed with scrypt + a random salt; a successful
- * login creates a random session token that is sent to the browser as an HttpOnly
- * cookie. The server keeps the session (token -> user) in memory.
- */
 const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs');
